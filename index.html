@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>RASCUNHO: SEM TRÉGUA — Jogo de Cartas Sketch</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Architects+Daughter&family=Patrick+Hand&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="sketch-paper min-h-[100dvh] lg:h-[100dvh] flex flex-col justify-between p-2.5 sm:p-5 select-none overflow-x-hidden">
+
+    <!-- TOPO: CABEÇALHO DO CADERNO, PLACAR DA CPU E REGRAS -->
+    <header class="w-full max-w-4xl mx-auto flex flex-col gap-2">
+        <div class="sketch-box p-3 sm:p-4 flex items-center justify-between gap-2.5">
+            <!-- Título Rabiscado -->
+            <div class="flex items-center gap-2.5 min-w-0">
+                <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-lg border-2 border-[#193454] bg-white flex items-center justify-center shrink-0 shadow-[2px_2px_0_#193454] -rotate-2">
+                    <span class="text-lg sm:text-xl font-bold text-[#193454]">✒</span>
+                </div>
+                <div class="leading-tight truncate">
+                    <h1 class="font-sketch-title text-sm sm:text-lg font-bold uppercase tracking-wide text-[#193454] truncate">
+                        RASCUNHO: SEM TRÉGUA
+                    </h1>
+                    <p class="text-[11px] sm:text-xs text-[#193454]/75 truncate">
+                        Limite do Caderno: 25 folhas
+                    </p>
+                </div>
+            </div>
+
+            <!-- Medidor da CPU + Link de Regras -->
+            <div class="flex items-center gap-2.5 sm:gap-4 shrink-0">
+                <div class="text-right">
+                    <div class="text-xs sm:text-sm font-bold text-[#193454]">
+                        Rival: <span id="cpu-count" class="text-base sm:text-lg tabular-nums">7</span>/25
+                    </div>
+                    <div class="w-20 sm:w-28 h-2 bg-white border border-[#193454] rounded-full overflow-hidden mt-0.5">
+                        <div id="cpu-mercy-bar" class="h-full bg-[#193454] transition-all duration-300" style="width: 28%"></div>
+                    </div>
+                </div>
+
+                <a href="regras.html"
+                    class="sketch-btn px-2.5 sm:px-3 py-1.5 text-xs font-bold uppercase tracking-wider shrink-0">
+                    ? Manual
+                </a>
+            </div>
+        </div>
+
+        <!-- Leque de Cartas Ocultas do Rival -->
+        <div id="cpu-hand" class="flex justify-center items-center -space-x-3 h-10 sm:h-12"></div>
+    </header>
+
+    <!-- CENTRO: MESA DE DESENHO (MONTE DE COMPRA + FOLHA ATIVA) -->
+    <main class="w-full max-w-4xl mx-auto flex flex-col items-center justify-center gap-2.5 sm:gap-3.5 my-1">
+
+        <!-- Etiqueta de Turno + Alerta de Acúmulo -->
+        <div class="flex flex-wrap items-center justify-center gap-2">
+            <span id="turn-badge" class="px-3.5 py-1 text-xs sm:text-sm font-bold uppercase tracking-wider border-2 border-[#193454] bg-[#193454] text-white rounded-full shadow-[2px_2px_0_rgba(25,52,84,0.25)]">
+                Sua Vez
+            </span>
+            <span id="stack-banner" class="hidden px-3.5 py-1 text-xs sm:text-sm font-bold uppercase tracking-wider border-2 border-[#193454] bg-white text-[#193454] rounded-full shadow-[2px_2px_0_#193454] animate-pulse">
+                ACÚMULO: +<span id="stack-amount">0</span> FOLHAS
+            </span>
+        </div>
+
+        <!-- Pilhas Centrais -->
+        <div class="flex items-center justify-center gap-6 sm:gap-12">
+            <!-- Monte de Compra (Bloco de Folhas) -->
+            <button id="draw-pile" class="table-slot deck-stack group relative flex flex-col items-center justify-center transition-transform active:scale-95" title="Comprar folha">
+                <div class="deck-sketch-emblem flex flex-col items-center justify-center">
+                    <span class="text-2xl sm:text-3xl text-[#193454]">✒</span>
+                    <span class="font-sketch-title text-[10px] sm:text-xs font-bold uppercase tracking-widest text-[#193454] mt-1">
+                        Comprar
+                    </span>
+                </div>
+                <span id="deck-count" class="absolute bottom-2 text-[10px] font-bold text-[#193454]/80 tabular-nums">0</span>
+            </button>
+
+            <!-- Folha Ativa na Mesa -->
+            <div class="flex flex-col items-center gap-1.5">
+                <div id="discard-pile" class="table-slot flex items-center justify-center"></div>
+                <div class="flex items-center gap-1.5 text-xs font-bold text-[#193454]">
+                    <span>Marca ativa:</span>
+                    <span id="active-suit-badge" class="px-2 py-0.5 border border-[#193454] bg-white rounded text-xs font-bold shadow-[1px_1px_0_#193454]">
+                        ☀ Sol
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Anotações da Rodada -->
+        <p id="status-text" class="text-center text-xs sm:text-base text-[#193454] font-bold min-h-[22px] px-3 max-w-lg">
+            Combine a marca ou o número da folha sobre a mesa.
+        </p>
+
+        <!-- Ações Contextuais -->
+        <div class="flex items-center justify-center gap-3 min-h-[38px]">
+            <button id="accept-penalty-btn" class="hidden sketch-btn-primary px-4 py-2 text-xs sm:text-sm font-bold uppercase tracking-wider">
+                Puxar Penalidade
+            </button>
+            <button id="uno-btn" class="hidden sketch-btn-primary px-5 py-2 text-xs sm:text-sm font-bold uppercase tracking-wider animate-bounce">
+                ✒ Última Folha!
+            </button>
+        </div>
+    </main>
+
+    <!-- BASE: SUAS FOLHAS NA MÃO -->
+    <footer class="w-full max-w-4xl mx-auto flex flex-col gap-1.5">
+        <div class="flex items-center justify-between px-1">
+            <div class="flex items-center gap-2.5 sm:gap-3">
+                <span class="text-xs sm:text-sm font-bold text-[#193454]">
+                    Suas Folhas: <strong id="player-count" class="text-base sm:text-lg tabular-nums">7</strong>/25
+                </span>
+                <div class="w-24 sm:w-36 h-2 bg-white border border-[#193454] rounded-full overflow-hidden">
+                    <div id="player-mercy-bar" class="h-full bg-[#193454] transition-all duration-300" style="width: 28%"></div>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-2 sm:gap-3">
+                <button id="sort-btn" class="sketch-btn px-2.5 py-1 text-xs font-bold uppercase tracking-wider">
+                    Organizar
+                </button>
+                <button id="restart-btn" class="text-xs sm:text-sm font-bold text-[#193454]/75 hover:text-[#193454] underline px-1">
+                    Limpar Mesa
+                </button>
+            </div>
+        </div>
+
+        <div id="player-hand" class="hand-container"></div>
+    </footer>
+
+    <!-- MODAL DE ESCOLHA DE MARCA (BORRÃO / ROLETA) -->
+    <div id="suit-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-[#193454]/50 backdrop-blur-xs p-4">
+        <div class="sketch-box bg-white p-5 sm:p-6 max-w-xs w-full text-center">
+            <h2 id="suit-modal-title" class="font-sketch-title text-sm sm:text-base font-bold uppercase tracking-wider text-[#193454] mb-4">
+                Escolha a Marca de Tinta
+            </h2>
+            <div class="grid grid-cols-2 gap-3">
+                <button data-suit="sun" class="suit-choice sketch-btn h-16 flex flex-col items-center justify-center gap-0.5">
+                    <span class="text-2xl leading-none">☀</span>
+                    <span class="text-xs font-bold uppercase tracking-wider">Sol</span>
+                </button>
+                <button data-suit="moon" class="suit-choice sketch-btn h-16 flex flex-col items-center justify-center gap-0.5">
+                    <span class="text-2xl leading-none">☾</span>
+                    <span class="text-xs font-bold uppercase tracking-wider">Lua</span>
+                </button>
+                <button data-suit="star" class="suit-choice sketch-btn h-16 flex flex-col items-center justify-center gap-0.5">
+                    <span class="text-2xl leading-none">✦</span>
+                    <span class="text-xs font-bold uppercase tracking-wider">Estrela</span>
+                </button>
+                <button data-suit="spiral" class="suit-choice sketch-btn h-16 flex flex-col items-center justify-center gap-0.5">
+                    <span class="text-2xl leading-none">◎</span>
+                    <span class="text-xs font-bold uppercase tracking-wider">Espiral</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL DE FIM DE PARTIDA -->
+    <div id="gameover-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-[#193454]/55 backdrop-blur-xs p-4">
+        <div class="sketch-box bg-white p-6 sm:p-7 max-w-sm w-full text-center">
+            <span class="inline-block px-3 py-0.5 border border-[#193454] text-xs font-bold uppercase tracking-widest text-[#193454] mb-3 -rotate-1">
+                Fim do Rascunho
+            </span>
+            <h2 id="winner-title" class="font-sketch-title text-2xl font-bold text-[#193454] mb-2">Vitória!</h2>
+            <p id="winner-reason" class="text-sm text-[#193454]/80 mb-6"></p>
+            <button id="play-again-btn" class="sketch-btn-primary w-full py-3 text-xs sm:text-sm font-bold uppercase tracking-widest">
+                Nova Folha em Branco
+            </button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,284 @@
+/* ==========================================================================
+   RASCUNHO: SEM TRÉGUA — ESTÉTICA SKETCHBOOK (#ffffff & #193454)
+   ========================================================================== */
+
+:root {
+    --paper: #ffffff;
+    --paper-off: #f8fafc;
+    --ink: #193454;
+    --ink-soft: rgba(25, 52, 84, 0.14);
+    --ink-line: rgba(25, 52, 84, 0.08);
+}
+
+body.sketch-paper {
+    font-family: 'Patrick Hand', cursive, sans-serif;
+    background-color: var(--paper);
+    color: var(--ink);
+    /* Pauta sutil de caderno + margem vertical */
+    background-image:
+        linear-gradient(90deg, transparent 36px, rgba(25, 52, 84, 0.12) 36px, rgba(25, 52, 84, 0.12) 37px, transparent 37px),
+        repeating-linear-gradient(
+            to bottom,
+            transparent 0px,
+            transparent 27px,
+            var(--ink-line) 27px,
+            var(--ink-line) 28px
+        );
+    background-attachment: fixed;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.font-sketch-title {
+    font-family: 'Architects Daughter', cursive, sans-serif;
+}
+
+/* Caixas e Botões com contorno orgânico feito à mão */
+.sketch-box {
+    background-color: rgba(255, 255, 255, 0.94);
+    border: 2px solid var(--ink);
+    border-radius: 14px 18px 15px 17px / 17px 14px 18px 15px;
+    box-shadow: 3px 3px 0px var(--ink);
+}
+
+.sketch-btn {
+    background-color: var(--paper);
+    color: var(--ink);
+    border: 2px solid var(--ink);
+    border-radius: 10px 13px 11px 12px / 12px 10px 13px 11px;
+    box-shadow: 2px 2px 0px var(--ink);
+    transition: transform 0.12s ease, box-shadow 0.12s ease, background-color 0.12s ease;
+}
+
+.sketch-btn:hover {
+    background-color: #eef3f9;
+}
+
+.sketch-btn:active {
+    transform: translate(2px, 2px);
+    box-shadow: 0px 0px 0px var(--ink);
+}
+
+.sketch-btn-primary {
+    background-color: var(--ink);
+    color: var(--paper);
+    border: 2px solid var(--ink);
+    border-radius: 11px 14px 12px 13px / 13px 11px 14px 12px;
+    box-shadow: 3px 3px 0px rgba(25, 52, 84, 0.35);
+    transition: transform 0.12s ease, box-shadow 0.12s ease;
+}
+
+.sketch-btn-primary:active {
+    transform: translate(2px, 2px);
+    box-shadow: 0px 0px 0px transparent;
+}
+
+/* ==========================================================================
+   CARTAS DE CADERNO (FOLHAS RABISCADAS)
+   ========================================================================== */
+.sketch-card {
+    width: clamp(72px, 19vw, 98px);
+    aspect-ratio: 2 / 3;
+    background-color: var(--paper);
+    color: var(--ink);
+    border: 2px solid var(--ink);
+    border-radius: 11px 14px 12px 13px / 13px 11px 14px 12px;
+    padding: clamp(6px, 1.4vw, 9px);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    flex-shrink: 0;
+    position: relative;
+    box-shadow: 3px 3px 0px var(--ink);
+    transition:
+        transform 0.18s cubic-bezier(0.22, 1.4, 0.36, 1),
+        box-shadow 0.18s ease,
+        opacity 0.2s ease,
+        margin 0.22s ease;
+    will-change: transform;
+}
+
+/* Moldura interna rabiscada */
+.sketch-card::before {
+    content: "";
+    position: absolute;
+    inset: 4px;
+    border: 1px dashed rgba(25, 52, 84, 0.35);
+    border-radius: 8px;
+    pointer-events: none;
+}
+
+.sketch-card.playable {
+    cursor: pointer;
+}
+
+@media (hover: hover) {
+    .sketch-card.playable:hover {
+        transform: translateY(-13px) rotate(-1.5deg) scale(1.03);
+        z-index: 25;
+        box-shadow: 5px 8px 0px var(--ink);
+    }
+}
+
+.sketch-card.unplayable {
+    opacity: 0.45;
+    cursor: not-allowed;
+    background-image: repeating-linear-gradient(
+        -45deg,
+        transparent,
+        transparent 6px,
+        rgba(25, 52, 84, 0.06) 6px,
+        rgba(25, 52, 84, 0.06) 7px
+    );
+}
+
+/* ==========================================================================
+   PADRÕES DE TINTA POR FAMÍLIA (100% BRANCO & #193454)
+   ========================================================================== */
+/* Sol: Papel limpo com selo solar */
+.mark-sun {
+    background-color: #ffffff;
+}
+
+/* Lua: Papel pontilhado (pontilhismo à caneta) */
+.mark-moon {
+    background-color: #ffffff;
+    background-image: radial-gradient(rgba(25, 52, 84, 0.16) 1px, transparent 1px);
+    background-size: 7px 7px;
+}
+
+/* Estrela: Papel quadriculado de rascunho */
+.mark-star {
+    background-color: #ffffff;
+    background-image:
+        linear-gradient(to right, rgba(25, 52, 84, 0.08) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(25, 52, 84, 0.08) 1px, transparent 1px);
+    background-size: 9px 9px;
+}
+
+/* Espiral: Papel com hachura diagonal leve */
+.mark-spiral {
+    background-color: #ffffff;
+    background-image: repeating-linear-gradient(
+        45deg,
+        rgba(25, 52, 84, 0.07) 0px,
+        rgba(25, 52, 84, 0.07) 1.5px,
+        transparent 1.5px,
+        transparent 7px
+    );
+}
+
+/* Borrão de Tinta (Curinga): Fundo invertido em nanquim #193454 com traço branco */
+.mark-ink {
+    background-color: var(--ink);
+    color: #ffffff;
+    box-shadow: 3px 3px 0px rgba(25, 52, 84, 0.4);
+}
+
+.mark-ink::before {
+    border-color: rgba(255, 255, 255, 0.55);
+}
+
+/* ==========================================================================
+   MESA CENTRAL: BLOCO DE COMPRA E FOLHA ATIVA
+   ========================================================================== */
+.table-slot {
+    width: clamp(84px, 22vw, 114px);
+    aspect-ratio: 2 / 3;
+    border-radius: 13px 16px 14px 15px / 15px 13px 16px 14px;
+}
+
+/* Pilha de folhas empilhadas */
+.deck-stack {
+    background-color: var(--paper);
+    border: 2px solid var(--ink);
+    box-shadow:
+        3px 3px 0px var(--paper),
+        4px 4px 0px var(--ink),
+        6px 6px 0px var(--paper),
+        7px 7px 0px var(--ink);
+}
+
+.deck-sketch-emblem {
+    width: 76%;
+    height: 62%;
+    border: 1.5px dashed var(--ink);
+    border-radius: 10px;
+}
+
+#discard-pile .sketch-card {
+    width: 100%;
+    height: 100%;
+    opacity: 1 !important;
+    cursor: default;
+    transform: none !important;
+    animation: sketchDrop 0.22s cubic-bezier(0.2, 1.35, 0.4, 1);
+}
+
+@keyframes sketchDrop {
+    from { transform: scale(1.14) rotate(-4deg); opacity: 0.65; }
+    to   { transform: scale(1) rotate(0deg); opacity: 1; }
+}
+
+/* ==========================================================================
+   MÃO DO JOGADOR (RECURSIVO / RESPONSIVO MOBILE E DESKTOP)
+   ========================================================================== */
+.hand-container {
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: clamp(6px, 1.4vw, 10px);
+    padding: 18px 8px 10px;
+    min-height: 152px;
+}
+
+/* Desktop com muitas cartas: sobreposição suave */
+@media (min-width: 640px) {
+    .hand-container:has(.sketch-card:nth-child(11)) {
+        flex-wrap: nowrap;
+        gap: 0;
+    }
+    .hand-container:has(.sketch-card:nth-child(11)) .sketch-card + .sketch-card {
+        margin-left: -18px;
+    }
+    .hand-container:has(.sketch-card:nth-child(17)) .sketch-card + .sketch-card {
+        margin-left: -32px;
+    }
+}
+
+/* Mobile: trilho horizontal tátil com scroll-snap e sobreposição progressiva */
+@media (max-width: 639px) {
+    .hand-container {
+        flex-wrap: nowrap;
+        justify-content: flex-start;
+        overflow-x: auto;
+        scroll-snap-type: x proximity;
+        -webkit-overflow-scrolling: touch;
+        padding-inline: 14px;
+        min-height: 136px;
+    }
+    .hand-container .sketch-card {
+        scroll-snap-align: center;
+    }
+    .hand-container:has(.sketch-card:nth-child(6)) {
+        gap: 0;
+    }
+    .hand-container:has(.sketch-card:nth-child(6)) .sketch-card + .sketch-card {
+        margin-left: -12px;
+    }
+    .hand-container:has(.sketch-card:nth-child(12)) .sketch-card + .sketch-card {
+        margin-left: -24px;
+    }
+}
+
+.hand-container::-webkit-scrollbar {
+    height: 5px;
+}
+.hand-container::-webkit-scrollbar-track {
+    background: rgba(25, 52, 84, 0.08);
+    border-radius: 999px;
+}
+.hand-container::-webkit-scrollbar-thumb {
+    background: var(--ink);
+    border-radius: 999px;
+}
